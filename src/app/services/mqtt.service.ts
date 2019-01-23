@@ -4,10 +4,11 @@ import {Paho} from 'ng2-mqtt/mqttws31';
 import {interval} from 'rxjs';
 
 const reconnectTimeout: number = 3000; // 3 seconds
+let isDone = false;
 
 @Injectable()
 export class MQTTService {
-    client;
+    client;    
 
     constructor() {
         this.connect();
@@ -42,13 +43,15 @@ export class MQTTService {
         this.client.onMessageArrived = (message: Paho.MQTT.Message) => {
           console.log('Message arrived : ' + message.payloadString);
         };
-    }
-    
+    }    
+
     onConnectionLost() {
         this.client.onConnectionLost = (responseObject: Object) => {
           console.log('Connection lost : ' + JSON.stringify(responseObject));
-          
-          //interval(3000).subscribe(() => this.connect());          
+                          
+          interval(reconnectTimeout).subscribe((value) => this.connect(),
+                                               (error) => console.error(error));
+
           //setInterval(this.connect, reconnectTimeout);
         };
     }    
