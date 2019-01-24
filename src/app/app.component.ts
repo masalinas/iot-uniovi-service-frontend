@@ -12,11 +12,10 @@ export class AppComponent implements OnInit {
   @ViewChild("graphContainer") graphContainer: ElementRef;
 
   title = 'IoT Uniovi Dashboard';
-  graph: any;
   dataset = new vis.DataSet();
-  DELAY: number = 1000; 
+  graph: any;
 
-  private onMqttMessageChangedEventHandler: EventEmitter<String>;
+  onMqttMessageChangedEventHandler: EventEmitter<String>;
 
   // move the window (you can think of different strategies).
   private renderStep(): void {
@@ -34,7 +33,7 @@ export class AppComponent implements OnInit {
     this.dataset.add({
       x: now,
       y: point,
-      label: { content: point, yOffset: -10}
+      label: { content: point, yOffset: 15}
     });
 
     // remove all data points which are no longer visible
@@ -57,25 +56,26 @@ export class AppComponent implements OnInit {
       },
       shaded: {
         orientation: 'bottom' // top, bottom
+      },
+      dataAxis: {
+        left: {title: {
+          text:'Temperature [℃]'}
+        }
       }
     };
 
     let container = this.graphContainer.nativeElement;
-
     this.graph = new vis.Graph2d(container, this.dataset, options);
-
-    //this.renderStep(this.graph);
-
-    //this.addDataPoint();
   }
 
   constructor(private mqttService: MQTTService) {
     this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
 
+      // console debug
       console.log('Message arrived : ' + message);
 
       this.renderStep();
       this.addDataPoint(message);
-  });
+    });
   }
 }
