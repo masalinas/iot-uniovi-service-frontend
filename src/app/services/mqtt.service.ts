@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import {Paho} from 'ng2-mqtt/mqttws31';
 
 import {interval} from 'rxjs';
@@ -8,7 +8,8 @@ let isDone = false;
 
 @Injectable()
 export class MQTTService {
-    client;    
+    client: any;    
+    onMqttMessageChanged = new EventEmitter<String>(true);
 
     constructor() {
         this.connect();
@@ -17,13 +18,13 @@ export class MQTTService {
     connect() {
         this.client = new Paho.MQTT.Client('127.0.0.1', 8080, 'uniovi');
 
+        this.onMessage();
+        this.onConnectionLost();            
+
         this.client.connect({useSSL: false,
             userName: 'admin',
             password: 'uniovi',
             onSuccess: this.onConnected.bind(this)});
-
-        this.onMessage();
-        this.onConnectionLost();            
     }
 
     onConnected() {
@@ -36,12 +37,13 @@ export class MQTTService {
     sendMessage(message: string) {
         let packet = new Paho.MQTT.Message(message);
         packet.destinationName = "sensors/temperature";
+
         this.client.send(packet);
     }
 
-    onMessage() {
+    onMessage()  {
         this.client.onMessageArrived = (message: Paho.MQTT.Message) => {
-          console.log('Message arrived : ' + message.payloadString);
+          this.onMqttMessageChanged.emit(message.payloadString);
         };
     }    
 
@@ -49,8 +51,8 @@ export class MQTTService {
         this.client.onConnectionLost = (responseObject: Object) => {
           console.log('Connection lost : ' + JSON.stringify(responseObject));
                           
-          interval(reconnectTimeout).subscribe((value) => this.connect(),
-                                               (error) => console.error(error));
+          /*interval(reconnectTimeout).subscribe((value) => this.connect(),
+                                               (error) => console.error(error));*/
 
           //setInterval(this.connect, reconnectTimeout);
         };

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import { MQTTService } from './services/mqtt.service';
 
 declare var vis:any;
@@ -16,31 +16,29 @@ export class AppComponent implements OnInit {
   dataset = new vis.DataSet();
   DELAY: number = 1000; 
 
-  private renderStep(graph): void {
+  private onMqttMessageChangedEventHandler: EventEmitter<String>;
+
+  private renderStep(): void {
     // move the window (you can think of different strategies).
     var now = vis.moment();
-    var range = graph.getWindow();
+    var range = this.graph.getWindow();
     var interval = range.end - range.start;
     
-    graph.setWindow(now - interval, now, {animation: false});
-    setTimeout(() => { this.renderStep }, this.DELAY);    
+    this.graph.setWindow(now - interval, now, {animation: false});
+    //setTimeout(() => { this.renderStep }, this.DELAY);    
   }
 
-  private y(x): number {
-    return (Math.sin(x / 2) + Math.cos(x / 4)) * 5;
-  }
-
-  private addDataPoint(graph): void {
+  private addDataPoint(point: any): void {
     // add a new data point to the dataset
     var now = vis.moment();
 
     this.dataset.add({
       x: now,
-      y: this.y(now / 1000)
+      y: point
     });
 
     // remove all data points which are no longer visible
-    var range = graph.getWindow();
+    var range = this.graph.getWindow();
     var interval = range.end - range.start;
     var oldIds = this.dataset.getIds({
       filter: function (item) {
@@ -48,21 +46,12 @@ export class AppComponent implements OnInit {
       }
     });
     this.dataset.remove(oldIds);
-
-    //setTimeout(() => { this.addDataPoint }, this.DELAY);
   }
 
   public ngOnInit(): void {  
     var options = {
       start: vis.moment().add(-30, 'seconds'), // changed so its faster
       end: vis.moment(),
-      dataAxis: {
-        left: {
-          range: {
-            min:-10, max: 10
-          }
-        }
-      },
       drawPoints: {
         style: 'circle' // square, circle
       },
@@ -77,8 +66,16 @@ export class AppComponent implements OnInit {
 
     //this.renderStep(this.graph);
 
-    this.addDataPoint(this.graph);
+    //this.addDataPoint();
   }
 
-  constructor(private mqttService: MQTTService) {}
+  constructor(private mqttService: MQTTService) {
+    this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
+
+      console.log('Message arrived : ' + message);
+
+      this.renderStep();
+      this.addDataPoint(message);
+  });
+  }
 }
