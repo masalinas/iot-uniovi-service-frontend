@@ -18,23 +18,23 @@ export class AppComponent implements OnInit {
 
   private onMqttMessageChangedEventHandler: EventEmitter<String>;
 
+  // move the window (you can think of different strategies).
   private renderStep(): void {
-    // move the window (you can think of different strategies).
     var now = vis.moment();
     var range = this.graph.getWindow();
     var interval = range.end - range.start;
     
     this.graph.setWindow(now - interval, now, {animation: false});
-    //setTimeout(() => { this.renderStep }, this.DELAY);    
   }
 
+  // add a new data point to the dataset
   private addDataPoint(point: any): void {
-    // add a new data point to the dataset
     var now = vis.moment();
 
     this.dataset.add({
       x: now,
-      y: point
+      y: point,
+      label: { content: point, yOffset: -10}
     });
 
     // remove all data points which are no longer visible
