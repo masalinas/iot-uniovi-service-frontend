@@ -48,6 +48,7 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {  
+    // configure timeline graph
     var options = {
       start: vis.moment().add(-30, 'seconds'), // changed so its faster
       end: vis.moment(),
@@ -74,7 +75,10 @@ export class AppComponent implements OnInit {
       // console debug
       console.log('Message arrived : ' + message);
 
+      // set x window
       this.renderStep();
+
+      // add new mqtt message
       this.addDataPoint(message);
     });
   }
