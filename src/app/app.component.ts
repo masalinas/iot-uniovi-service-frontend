@@ -27,14 +27,25 @@ export class AppComponent implements OnInit {
   }
 
   // add a new data point to the dataset
-  private addDataPoint(point: any): void {
+  private addDataPoint(data: any, alarm: boolean): void {
     var now = vis.moment();
 
-    this.dataset.add({
-      x: now,
-      y: point,
-      label: { content: point, yOffset: 15}
-    });
+    let point: object;
+
+    if (alarm == true)
+      point = {
+        x: now,
+        y: data,
+        label: { content: data, yOffset: 15, className: "alarm"}
+      }
+    else
+      point = {
+        x: now,
+        y: data,
+        label: { content: data, yOffset: 15}
+      }
+
+    this.dataset.add(point);
 
     // remove all data points which are no longer visible
     var range = this.graph.getWindow();
@@ -75,11 +86,14 @@ export class AppComponent implements OnInit {
       // console debug
       console.log('Message arrived : ' + message);
 
-      // set x window
+      // set x axis graph window
       this.renderStep();
 
       // add new mqtt message
-      this.addDataPoint(message);
+      if (message > 0 && message < 40)
+        this.addDataPoint(message, false);
+      else
+        this.addDataPoint(message, true);
     });
   }
 }

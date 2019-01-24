@@ -31,7 +31,7 @@ export class MQTTService {
         console.log("Connected");
 
         this.client.subscribe('sensors/temperature');
-        this.sendMessage('0.0');
+        //this.sendMessage('0.0');
     }
 
     sendMessage(message: string) {
