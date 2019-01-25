@@ -16,7 +16,7 @@ export class MQTTService {
     }
 
     connect() {
-        this.client = new Paho.MQTT.Client('127.0.0.1', 8080, 'uniovi');
+        this.client = new Paho.MQTT.Client('127.0.0.1', 8080, 'web_client');
 
         this.onMessage();
         this.onConnectionLost();            
