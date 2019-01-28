@@ -1,1 +1,22 @@
-<div id="historic" #historicContainer></div>
+<div fxLayout="column" fxLayoutWrap>
+    <!-- filter Historic graph -->
+    <div fxLayout="row" fxLayoutWrap fxLayoutGap="10px" fxLayoutAlign="left">        
+        <mat-form-field>
+            <input matInput [matDatepicker]="dateFromInput" placeholder="Date from" [formControl]="dateFrom">
+            <mat-datepicker-toggle matSuffix [for]="dateFromInput"></mat-datepicker-toggle>
+            <mat-datepicker #dateFromInput></mat-datepicker>                      
+        </mat-form-field>
+        
+        <mat-form-field>
+            <input matInput [matDatepicker]="dateToInput" placeholder="Date to" [formControl]="dateTo">
+            <mat-datepicker-toggle matSuffix [for]="dateToInput"></mat-datepicker-toggle>
+            <mat-datepicker #dateToInput></mat-datepicker>                      
+        </mat-form-field>
+
+        <div fxFlex></div>
+        <button mat-fab color="primary">Load</button>
+    </div>            
+
+    <!-- Historic graph -->
+    <div id="historic" #historicContainer></div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import {FormControl} from '@angular/forms';
 
 declare var vis:any;
 
@@ -9,6 +10,10 @@ declare var vis:any;
 })
 export class HistoricComponent implements OnInit {   
     title = 'Historic Graph';
+
+    dateFrom = new FormControl(new Date());
+    dateTo = new FormControl(new Date());
+    serializedDate = new FormControl((new Date()).toISOString());
 
     @ViewChild("historicContainer") container: ElementRef;
 
