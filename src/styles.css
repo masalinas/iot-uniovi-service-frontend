@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+/* angular material styles */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* vis.js styles */
 @import "node_modules/vis/dist/vis.min.css";
 @import "node_modules/vis/dist/vis-timeline-graph2d.min.css";
 
