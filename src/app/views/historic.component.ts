@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
-import { BASE_URL, API_VERSION } from '../shared/sdk/base.url';
-import { LoopBackConfig, LoggerService } from '../shared/sdk/';
-
 import { Measure } from '../shared/sdk/models';
 import { MeasureApi } from '../shared/sdk/services';
 
@@ -51,9 +48,9 @@ export class HistoricComponent implements OnInit {
   }
 
   onLoad(event: any) {  
-    this.measureApi.find().subscribe((result: Measure[]) => { 
+    this.measureApi.find({where: {device: 'TP01'}}).subscribe((result: Measure[]) => { 
       this.measures = result;    
-      
+
       console.log(this.measures);
     },
     error => {
@@ -61,9 +58,5 @@ export class HistoricComponent implements OnInit {
     });
   }    
 
-  constructor(private measureApi: MeasureApi) {
-    // Configure LoopBack Once or Individually by Component
-    LoopBackConfig.setBaseURL(BASE_URL);
-    LoopBackConfig.setApiVersion(API_VERSION);
-  }
+  constructor(private measureApi: MeasureApi) {}
 }
