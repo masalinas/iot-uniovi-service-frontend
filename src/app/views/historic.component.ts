@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
+import { MeasureControllerService, Measure } from '../../app/shared/sdk';
+import { Filter} from '../../app/shared/sdk/model/filter';
+
 declare var vis:any;
 
 @Component({
@@ -42,7 +45,19 @@ export class HistoricComponent implements OnInit {
   this.graph = new vis.Graph2d(container, this.dataset, options);   
   }
 
-  onload(event: any) {
-    
+  onLoad(event: any) {  
+    let filter: Filter;
+    filter = {limit: 1};
+
+    this.measureControllerService.measuresGet(filter)
+    //this.measureControllerService.measuresGet()    
+    .subscribe((result: Measure[]) => {
+      console.log(result);
+    },
+    error => {
+      console.log(error);
+    });
   }    
+
+  constructor(private measureControllerService: MeasureControllerService) {}
 }

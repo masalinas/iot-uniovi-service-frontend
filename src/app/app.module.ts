@@ -1,6 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+/** import Swagger providers **/
+import { HttpClientModule } from '@angular/common/http';
+
+import { BASE_PATH } from './shared/sdk';
+
+import { MeasureControllerService } from '../app/shared/sdk';
+
+/** import angular environment variables **/
+import { environment } from '../environments/environment';
+
 import {FlexLayoutModule } from '@angular/flex-layout';
 import {MaterialModule} from './material-module';
 
@@ -22,12 +32,15 @@ import { MQTTService } from './services/mqtt.service';
   imports: [
     BrowserModule,
     FlexLayoutModule,
+    HttpClientModule,
     NoopAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule
   ],
-  providers: [MQTTService],
+  providers: [MQTTService,
+    { provide: BASE_PATH, useValue: environment.basePath },
+    MeasureControllerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
