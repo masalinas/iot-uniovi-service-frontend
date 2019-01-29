@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
-import { MeasureControllerService, Measure } from '../../app/shared/sdk';
-import { Filter} from '../../app/shared/sdk/model/filter';
+import { BASE_URL, API_VERSION } from '../shared/sdk/base.url';
+import { LoopBackConfig, LoggerService } from '../shared/sdk/';
+
+import { Measure } from '../shared/sdk/models';
+import { MeasureApi } from '../shared/sdk/services';
 
 declare var vis:any;
 
@@ -13,6 +16,8 @@ declare var vis:any;
 })
 export class HistoricComponent implements OnInit {   
   title = 'Historic Graph';
+
+  measures : Measure[];
 
   dateFrom = new FormControl(new Date());
   dateTo = new FormControl(new Date());
@@ -46,18 +51,19 @@ export class HistoricComponent implements OnInit {
   }
 
   onLoad(event: any) {  
-    let filter: Filter;
-    filter = {limit: 1};
-
-    this.measureControllerService.measuresGet(filter)
-    //this.measureControllerService.measuresGet()    
-    .subscribe((result: Measure[]) => {
-      console.log(result);
+    this.measureApi.find().subscribe((result: Measure[]) => { 
+      this.measures = result;    
+      
+      console.log(this.measures);
     },
     error => {
       console.log(error);
     });
   }    
 
-  constructor(private measureControllerService: MeasureControllerService) {}
+  constructor(private measureApi: MeasureApi) {
+    // Configure LoopBack Once or Individually by Component
+    LoopBackConfig.setBaseURL(BASE_URL);
+    LoopBackConfig.setApiVersion(API_VERSION);
+  }
 }
