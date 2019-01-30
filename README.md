@@ -27,10 +27,10 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 ## add script to avoid global error
-  <!-- https://github.com/aws/aws-amplify/issues/678 fix: -->
-  <script>
-    if (global === undefined) {
-      var global = window;
-    }
-  </script>
-  <!-- https://github.com/aws/aws-amplify/issues/678 fix end-->
+<!-- https://github.com/aws/aws-amplify/issues/678 fix: -->
+<script>
+  if (global === undefined) {
+    var global = window;
+  }
+</script>
+<!-- https://github.com/aws/aws-amplify/issues/678 fix end-->

@@ -4,6 +4,8 @@ import {FormControl} from '@angular/forms';
 import { Measure } from '../shared/sdk/models';
 import { MeasureApi } from '../shared/sdk/services';
 
+import * as moment from 'moment';
+
 declare var vis:any;
 
 @Component({
@@ -14,11 +16,8 @@ declare var vis:any;
 export class HistoricComponent implements OnInit {   
   title = 'Historic Graph';
 
-  measures : Measure[];
-
   dateFrom = new FormControl(new Date());
   dateTo = new FormControl(new Date());
-  serializedDate = new FormControl((new Date()).toISOString());
 
   @ViewChild("historicContainer") container: ElementRef;
 
@@ -27,31 +26,60 @@ export class HistoricComponent implements OnInit {
 
   public ngOnInit(): void {  
     // configure realtime graph
-  var options = {
-    start: vis.moment().add(-30, 'seconds'), // changed so its faster
-    end: vis.moment(),
-    drawPoints: {
-      style: 'circle' // square, circle
-    },
-    shaded: {
-      orientation: 'bottom' // top, bottom
-    },
-    dataAxis: {
-      left: {title: {
-        text:'Temperature [℃]'}
+    const options = {
+      scales: {
+        xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'datetime',
+              unitStepSize: 1,
+              displayFormats: {
+                'datetime': 'DD/MM/YYYY HH:mm:ss'
+              }
+            }
+          }
+        ]
+      },
+      drawPoints: {
+        style: 'circle' // square, circle
+      },
+      shaded: {
+        orientation: 'bottom' // top, bottom
+      },
+      dataAxis: {
+        left: {title: {
+          text:'Temperature [℃]'}
+        }
       }
-    }
-  };
+    };
 
-  let container = this.container.nativeElement;
-  this.graph = new vis.Graph2d(container, this.dataset, options);   
+    let container = this.container.nativeElement;
+    this.graph = new vis.Graph2d(container, this.dataset, options);   
   }
 
-  onLoad(event: any) {  
-    this.measureApi.find({where: {device: 'TP01'}}).subscribe((result: Measure[]) => { 
-      this.measures = result;    
+  onLoad(event: any) {      
+    console.log('dateFrom: ' + this.dateFrom.value);
+    console.log('dateTo: ' + this.dateTo.value);
 
-      console.log(this.measures);
+    //let now = moment();
+
+    let filter: object = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
+                                        {date: {lt: new Date(this.dateTo.value)}}]}};
+
+    this.measureApi.find(filter).subscribe((measures: Measure[]) => { 
+      console.log('Measures: ' + measures);
+
+      // clear graph dataset 
+      this.dataset.clear();
+
+      // fill graph dataset 
+      measures.forEach((element, index) => {
+        this.dataset.add({
+          x: element.date,
+          y: element.value,
+          label: { content: element.value, yOffset: 15}
+        })
+      });     
     },
     error => {
       console.log(error);
