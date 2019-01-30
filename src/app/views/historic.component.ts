@@ -27,19 +27,6 @@ export class HistoricComponent implements OnInit {
   public ngOnInit(): void {  
     // configure realtime graph
     const options = {
-      scales: {
-        xAxes: [{
-            type: 'time',
-            time: {
-              unit: 'datetime',
-              unitStepSize: 1,
-              displayFormats: {
-                'datetime': 'DD/MM/YYYY HH:mm:ss'
-              }
-            }
-          }
-        ]
-      },
       drawPoints: {
         style: 'circle' // square, circle
       },
@@ -61,25 +48,25 @@ export class HistoricComponent implements OnInit {
     console.log('dateFrom: ' + this.dateFrom.value);
     console.log('dateTo: ' + this.dateTo.value);
 
-    //let now = moment();
-
     let filter: object = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
                                         {date: {lt: new Date(this.dateTo.value)}}]}};
 
     this.measureApi.find(filter).subscribe((measures: Measure[]) => { 
       console.log('Measures: ' + measures);
 
-      // clear graph dataset 
-      this.dataset.clear();
-
-      // fill graph dataset 
+      // fill graph dataset
+      let data = [];
       measures.forEach((element, index) => {
-        this.dataset.add({
+        data.push({
           x: element.date,
           y: element.value,
           label: { content: element.value, yOffset: 15}
-        })
-      });     
+        });
+      }); 
+
+      // clear graph dataset
+      this.graph.setItems(data);
+      this.graph.fit();
     },
     error => {
       console.log(error);
