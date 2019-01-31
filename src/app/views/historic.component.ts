@@ -4,6 +4,8 @@ import {FormControl} from '@angular/forms';
 import { Measure } from '../shared/sdk/models';
 import { MeasureApi } from '../shared/sdk/services';
 
+import {MatSnackBar} from '@angular/material';
+
 import * as moment from 'moment';
 
 declare var vis:any;
@@ -72,14 +74,20 @@ export class HistoricComponent implements OnInit {
         });
       }); 
 
-      // clear graph dataset
+      // set graph dataset
       this.graph.setItems(data);
+
+      // fit graph from dataset
       this.graph.fit();
+
+      this.snackBar.open('The historize was loaded!', 'Ok', {
+        duration: 2000,
+      });
     },
     error => {
       console.log(error);
     });
   }    
 
-  constructor(private measureApi: MeasureApi) {}
+  constructor(private measureApi: MeasureApi, private snackBar: MatSnackBar) {}
 }

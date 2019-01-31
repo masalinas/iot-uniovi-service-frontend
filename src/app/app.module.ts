@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 import { RealtimeComponent } from './views/realtime.component';
 import { HistoricComponent } from './views/historic.component';
 
+/** import App services **/
 import { MQTTService } from './services/mqtt.service';
 
 @NgModule({

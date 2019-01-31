@@ -1,7 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import {FormControl} from '@angular/forms';
+
+import {MatSnackBar} from '@angular/material';
+
 import { MQTTService } from '../services/mqtt.service';
+import { Configuration } from '../shared/sdk/models';
+import { ConfigurationApi } from '../shared/sdk/services';
 
 declare var vis:any;
+
+const KEY: string = 'FREQUENCY';
 
 @Component({
   selector: 'realtime',
@@ -16,7 +24,13 @@ export class RealtimeComponent implements OnInit {
   dataset = new vis.DataSet();  
   graph: any;
 
+  frequency = new FormControl(10);
+
   onMqttMessageChangedEventHandler: EventEmitter<String>;
+
+  private getFrequencyLength(): string {
+    return this.frequency.value.toString().length;
+  }
 
   // move the window (you can think of different strategies).
   private renderStep(): void {
@@ -81,11 +95,21 @@ export class RealtimeComponent implements OnInit {
     this.graph = new vis.Graph2d(container, this.dataset, options);   
   }
 
+  onSaveFrequency(event: any) {  
+    this.configurationApi.updateKey(KEY, this.frequency.value).subscribe((configuration: Configuration) => { 
+      console.log('Frecuency: ' + this.frequency.value.toString().length);
+
+      this.snackBar.open('The configuration was saved!', 'Ok', {
+        duration: 3000,
+      });
+    });
+  }
+
   public ngOnInit(): void {  
     this.configGraph();    
   }
 
-  constructor(private mqttService: MQTTService) {
+  constructor(private mqttService: MQTTService, private configurationApi: ConfigurationApi, private snackBar: MatSnackBar) {
     this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
       // console debug
       console.log('Message arrived : ' + message);
