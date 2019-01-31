@@ -73,7 +73,7 @@ export class RealtimeComponent implements OnInit {
     this.dataset.remove(oldIds);
   }
 
-  private configGraph() {
+  private configGraph() {    
     // configure realtime graph
     var options = {
       start: vis.moment().add(-30, 'seconds'), // changed so its faster

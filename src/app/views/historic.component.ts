@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import { Measure } from '../shared/sdk/models';
@@ -16,8 +16,9 @@ declare var vis:any;
   styleUrls: ['./historic.component.css']
 })
 export class HistoricComponent implements OnInit {   
+  // initualize class attributes
   title = 'Historic Graph';
-
+  
   dateFrom = new FormControl(moment().startOf('day').toDate());
   dateTo = new FormControl(moment().endOf('day').toDate());
 
@@ -25,34 +26,6 @@ export class HistoricComponent implements OnInit {
 
   dataset = new vis.DataSet();  
   graph: any;
-
-  public ngOnInit(): void {  
-    // graph configuration
-    const options = {
-      drawPoints: function(item, group) {
-        // set item style
-        group.style = 'circle';
-
-        // round value
-        item.y = Math.round(item.y * 100) / 100;
-        item.orginalY = item.y;
-        item.label.content = item.y;
-
-        return item;
-      },
-      shaded: {
-        orientation: 'bottom' // top, bottom
-      },
-      dataAxis: {
-        left: {title: {
-          text:'Temperature [℃]'}
-        }
-      }      
-    };
-
-    let container = this.container.nativeElement;
-    this.graph = new vis.Graph2d(container, this.dataset, options);   
-  }
 
   onLoad(event: any) {      
     console.log('dateFrom: ' + this.dateFrom.value);
@@ -87,9 +60,47 @@ export class HistoricComponent implements OnInit {
     error => {
       console.log(error);
     });
-  }    
+  } 
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize(event?) {
+    this.graph.options.height = Math.round( window.innerHeight * 0.70) + 'px';
+    this.graph.options.graphHeight = this.graph.options.height;
+  }
+
+  public ngOnInit(): void {  
+    // graph configuration
+    const options = {
+      drawPoints: function(item, group) {
+        // set item style
+        group.style = 'circle';
+
+        // round value
+        item.y = Math.round(item.y * 100) / 100;
+        item.orginalY = item.y;
+        item.label.content = item.y;
+
+        return item;
+      },
+      shaded: {
+        orientation: 'bottom' // top, bottom
+      },
+      dataAxis: {
+        left: {title: {
+          text:'Temperature [℃]'}
+        }
+      }
+    };
+
+    let container = this.container.nativeElement;
+    this.graph = new vis.Graph2d(container, this.dataset, options);   
+
+    // resize the graph to expand
+    //this.getScreenSize();
+  }
 
   constructor(private measureApi: MeasureApi, private snackBar: MatSnackBar, private dateAdapter: DateAdapter<Date>) {
+    // set locale settings
     this.dateAdapter.setLocale('es'); 
   }
 }
