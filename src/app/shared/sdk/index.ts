@@ -49,6 +49,7 @@ import { SocketDriver } from './sockets/socket.driver';
 import { SocketConnection } from './sockets/socket.connections';
 import { RealTime } from './services/core/real.time';
 import { MeasureApi } from './services/custom/Measure';
+import { ConfigurationApi } from './services/custom/Configuration';
 /**
 * @module SDKBrowserModule
 * @description
@@ -80,6 +81,7 @@ export class SDKBrowserModule {
         SDKModels,
         RealTime,
         MeasureApi,
+        ConfigurationApi,
         internalStorageProvider,
         { provide: SDKStorage, useClass: StorageBrowser },
         { provide: SocketDriver, useClass: SocketBrowser }

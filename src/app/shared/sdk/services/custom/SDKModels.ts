@@ -1,6 +1,7 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
 import { Measure } from '../../models/Measure';
+import { Configuration } from '../../models/Configuration';
 
 export interface Models { [name: string]: any }
 
@@ -9,6 +10,7 @@ export class SDKModels {
 
   private models: Models = {
     Measure: Measure,
+    Configuration: Configuration,
     
   };
 

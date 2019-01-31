@@ -9,15 +9,15 @@ import { LoopBackFilter,  } from '../../models/BaseModels';
 import { ErrorHandler } from '../core/error.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Measure } from '../../models/Measure';
+import { Configuration } from '../../models/Configuration';
 import { SocketConnection } from '../../sockets/socket.connections';
 
 
 /**
- * Api services for the `Measure` model.
+ * Api services for the `Configuration` model.
  */
 @Injectable()
-export class MeasureApi extends BaseLoopBackApi {
+export class ConfigurationApi extends BaseLoopBackApi {
 
   constructor(
     @Inject(HttpClient) protected http: HttpClient,
@@ -30,9 +30,9 @@ export class MeasureApi extends BaseLoopBackApi {
   }
 
   /**
-   * Set measure frequency
+   * Get configuration by key
    *
-   * @param {number} frequency Historize frequency
+   * @param {string} key Key code
    *
    * @param {object} data Request data.
    *
@@ -44,15 +44,15 @@ export class MeasureApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `Measure` object.)
+   * This usually means the response is a `Configuration` object.)
    * </em>
    */
-  public setFrequency(frequency: any, customHeaders?: Function): Observable<any> {
+  public getByKey(key: any, customHeaders?: Function): Observable<any> {
     let _method: string = "POST";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/Measures/:frequency/setFrequency";
+    "/Configurations/:key/getByKey";
     let _routeParams: any = {
-      frequency: frequency
+      key: key
     };
     let _postBody: any = {};
     let _urlParams: any = {};
@@ -61,11 +61,15 @@ export class MeasureApi extends BaseLoopBackApi {
   }
 
   /**
-   * Historize Measure
+   * Set value configuration by key
+   *
+   * @param {string} key Key code
+   *
+   * @param {any} value Key value
    *
    * @param {object} data Request data.
    *
-   *  - `measure` – `{object}` - Measure
+   * This method does not accept any data. Supply an empty object.
    *
    * @returns {object} An empty reference that will be
    *   populated with the actual data once the response is returned
@@ -73,17 +77,18 @@ export class MeasureApi extends BaseLoopBackApi {
    *
    * <em>
    * (The remote method definition does not provide any description.
-   * This usually means the response is a `Measure` object.)
+   * This usually means the response is a `Configuration` object.)
    * </em>
    */
-  public historize(measure: any, customHeaders?: Function): Observable<any> {
+  public updateKey(key: any, value: any, customHeaders?: Function): Observable<any> {
     let _method: string = "POST";
     let _url: string = LoopBackConfig.getPath() + "/" + LoopBackConfig.getApiVersion() +
-    "/Measures/historize";
-    let _routeParams: any = {};
-    let _postBody: any = {
-      measure: measure
+    "/Configurations/:key/:value/updateKey";
+    let _routeParams: any = {
+      key: key,
+      value: value
     };
+    let _postBody: any = {};
     let _urlParams: any = {};
     let result = this.request(_method, _url, _routeParams, _urlParams, _postBody, null, customHeaders);
     return result;
@@ -91,9 +96,9 @@ export class MeasureApi extends BaseLoopBackApi {
 
   /**
    * The name of the model represented by this $resource,
-   * i.e. `Measure`.
+   * i.e. `Configuration`.
    */
   public getModelName() {
-    return "Measure";
+    return "Configuration";
   }
 }
