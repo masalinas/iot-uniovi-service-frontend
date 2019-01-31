@@ -1,13 +1,4 @@
-/** import angular environment variables **/
 import { environment } from '../../environments/environment';
-
-const BASE_URL = environment.basePath;
-const BROKER_URL = environment.brokerPath;
-const BROKER_CLIENT_ID = 'WEB_CLI';
-
-const API_VERSION = 'api';
-//const CLIENT_ID = environment.clientId;
-//const CLIENT_SECRET = environment.clientSecret;
 
 export class AppConfigurator {
     /**
@@ -17,7 +8,7 @@ export class AppConfigurator {
      * This method returns hostname from environment
      **/
     public static getApiHostname(): string {
-        const url = new URL(BASE_URL);
+        const url = new URL(environment.basePath);
 
         return url.hostname;
     }
@@ -29,7 +20,7 @@ export class AppConfigurator {
      * This method returns port from environment
      **/
     public static getApiPort(): string {
-        const url = new URL(BASE_URL);
+        const url = new URL(environment.basePath);
 
         return url.port;
     }
@@ -41,7 +32,7 @@ export class AppConfigurator {
      * This method returns protocol from environment
      **/
     public static getApiProtocol(): string {
-        const url = new URL(BASE_URL);
+        const url = new URL(environment.basePath);
 
         return url.protocol;
     }
@@ -53,7 +44,7 @@ export class AppConfigurator {
      * This method returns host name from environment
      **/
     public static getApiVersion(): string {
-        return API_VERSION;
+        return "api";
     }
 
     /**
@@ -63,7 +54,7 @@ export class AppConfigurator {
      * This method returns host name from environment
      **/
     /*public static getClientId(): string {
-        return CLIENT_ID;
+        return environment.clientId;
     }*/
 
     /**
@@ -73,7 +64,7 @@ export class AppConfigurator {
      * This method returns host name from environment
      **/
     /*public static getClientSecret(): string {
-        return CLIENT_SECRET;
+        return environment.clientSecret;
     }*/ 
     
     /**
@@ -83,7 +74,7 @@ export class AppConfigurator {
      * This method returns hostname from environment
      **/
     public static getBrokerHostname(): string {
-        const url = new URL(BROKER_URL);
+        const url = new URL(environment.brokerPath);
 
         return url.hostname;
     }
@@ -95,7 +86,7 @@ export class AppConfigurator {
      * This method returns port from environment
      **/
     public static getBrokerPort(): number {
-        const url = new URL(BROKER_URL);
+        const url = new URL(environment.brokerPath);
 
         return Number(url.port);
     }  
