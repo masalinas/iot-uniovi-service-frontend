@@ -106,7 +106,11 @@ export class RealtimeComponent implements OnInit {
   }
 
   public ngOnInit(): void {  
-    this.configGraph();    
+    this.configGraph();   
+    
+    this.configurationApi.getByKey(KEY).subscribe((configuration: Configuration) => { 
+      this.frequency.setValue(configuration.value);
+    });
   }
 
   constructor(private mqttService: MQTTService, private configurationApi: ConfigurationApi, private snackBar: MatSnackBar) {

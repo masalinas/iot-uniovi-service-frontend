@@ -4,7 +4,7 @@ import {FormControl} from '@angular/forms';
 import { Measure } from '../shared/sdk/models';
 import { MeasureApi } from '../shared/sdk/services';
 
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar, DateAdapter} from '@angular/material';
 
 import * as moment from 'moment';
 
@@ -18,8 +18,8 @@ declare var vis:any;
 export class HistoricComponent implements OnInit {   
   title = 'Historic Graph';
 
-  dateFrom = new FormControl(new Date());
-  dateTo = new FormControl(new Date());
+  dateFrom = new FormControl(moment().startOf('day').toDate());
+  dateTo = new FormControl(moment().endOf('day').toDate());
 
   @ViewChild("historicContainer") container: ElementRef;
 
@@ -89,5 +89,7 @@ export class HistoricComponent implements OnInit {
     });
   }    
 
-  constructor(private measureApi: MeasureApi, private snackBar: MatSnackBar) {}
+  constructor(private measureApi: MeasureApi, private snackBar: MatSnackBar, private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale('es'); 
+  }
 }
