@@ -25,10 +25,18 @@ export class HistoricComponent implements OnInit {
   graph: any;
 
   public ngOnInit(): void {  
-    // configure realtime graph
+    // graph configuration
     const options = {
-      drawPoints: {
-        style: 'circle' // square, circle
+      drawPoints: function(item, group) {
+        // set item style
+        group.style = 'circle';
+
+        // round value
+        item.y = Math.round(item.y * 100) / 100;
+        item.orginalY = item.y;
+        item.label.content = item.y;
+
+        return item;
       },
       shaded: {
         orientation: 'bottom' // top, bottom
@@ -37,7 +45,7 @@ export class HistoricComponent implements OnInit {
         left: {title: {
           text:'Temperature [℃]'}
         }
-      }
+      }      
     };
 
     let container = this.container.nativeElement;
