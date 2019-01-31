@@ -1,6 +1,9 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import {Paho} from 'ng2-mqtt/mqttws31';
 
+/** import angular environment variables **/
+import { BASE_URL, API_VERSION } from '../shared/sdk/base.url';
+
 import {interval} from 'rxjs';
 
 const reconnectTimeout: number = 3000; // 3 seconds
@@ -16,7 +19,8 @@ export class MQTTService {
     }
 
     connect() {
-        this.client = new Paho.MQTT.Client('127.0.0.1', 8080, 'web_client');
+        this.client = new Paho.MQTT.Client('0.0.0.0', 8080, 'web_client');
+        //this.client = new Paho.MQTT.Client('192.168.1.27', 8080, 'web_client');
 
         this.onMessage();
         this.onConnectionLost();            
