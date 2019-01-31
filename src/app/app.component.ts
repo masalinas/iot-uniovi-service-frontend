@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
-import { BASE_URL, API_VERSION } from './shared/sdk/base.url';
+import { AppConfigurator } from './shared/app.configurator';
 import { LoopBackConfig, LoggerService } from './shared/sdk/';
 
 @Component({
@@ -12,8 +12,11 @@ export class AppComponent {
   title = 'IoT Uniovi Dashboard';
 
   constructor() {
+    const baseUrl = AppConfigurator.getApiProtocol() + '//' + AppConfigurator.getApiHostname() + ':' + AppConfigurator.getApiPort();
+    const apiVersion = AppConfigurator.getApiVersion();
+
     // Configure LoopBack Once or Individually by Component
-    LoopBackConfig.setBaseURL(BASE_URL);
-    LoopBackConfig.setApiVersion(API_VERSION);
+    LoopBackConfig.setBaseURL(baseUrl);
+    LoopBackConfig.setApiVersion(apiVersion);
   }
 }

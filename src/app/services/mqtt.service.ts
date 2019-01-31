@@ -2,11 +2,11 @@ import { Injectable, EventEmitter } from '@angular/core';
 import {Paho} from 'ng2-mqtt/mqttws31';
 
 /** import angular environment variables **/
-import { BASE_URL, API_VERSION } from '../shared/sdk/base.url';
+import { AppConfigurator } from '../shared/app.configurator';
 
 import {interval} from 'rxjs';
 
-const reconnectTimeout: number = 3000; // 3 seconds
+const TIMEOUT: number = 3000; // 3 seconds
 let isDone = false;
 
 @Injectable()
@@ -19,8 +19,9 @@ export class MQTTService {
     }
 
     connect() {
-        this.client = new Paho.MQTT.Client('0.0.0.0', 8080, 'web_client');
-        //this.client = new Paho.MQTT.Client('192.168.1.27', 8080, 'web_client');
+        this.client = new Paho.MQTT.Client(AppConfigurator.getBrokerHostname(), 
+                                           AppConfigurator.getBrokerPort(),
+                                           AppConfigurator.getBrokerClientId());
 
         this.onMessage();
         this.onConnectionLost();            
@@ -55,10 +56,10 @@ export class MQTTService {
         this.client.onConnectionLost = (responseObject: Object) => {
           console.log('Connection lost : ' + JSON.stringify(responseObject));
                           
-          /*interval(reconnectTimeout).subscribe((value) => this.connect(),
+          /*interval(TIMEOUT).subscribe((value) => this.connect(),
                                                (error) => console.error(error));*/
 
-          //setInterval(this.connect, reconnectTimeout);
+          //setInterval(this.connect, TIMEOUT);
         };
     }    
 }
