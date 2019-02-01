@@ -21,18 +21,52 @@ export class HistoricComponent implements OnInit {
   
   dateFrom = new FormControl(moment().startOf('day').toDate());
   dateTo = new FormControl(moment().endOf('day').toDate());
+  device = '*';
 
   @ViewChild("historicContainer") container: ElementRef;
 
+  groups = new vis.DataSet();
   dataset = new vis.DataSet();  
   graph: any;
+
+  getGraphOption(id, name, color) {
+    return {
+      id: id,
+      content: name,
+      drawPoints: function(id, item, group) {
+        // set item style
+        group.style = 'circle';
+
+        // round value
+        item.y = Math.round(item.y * 100) / 100;
+        item.orginalY = item.y;
+        item.label.content = item.y;
+
+        return item;
+      },
+      shaded: {
+        orientation: 'bottom' // top, bottom
+      },
+      dataAxis: {
+        left: {title: {
+          text:'Temperature [℃]'}
+        }
+      }
+    };
+  }
 
   onLoad(event: any) {      
     console.log('dateFrom: ' + this.dateFrom.value);
     console.log('dateTo: ' + this.dateTo.value);
 
-    let filter: object = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
-                                        {date: {lt: new Date(this.dateTo.value)}}]}};
+    let filter: object;
+    if (this.device != '*')
+      filter = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
+                              {date: {lt: new Date(this.dateTo.value)}}]}};
+    else
+      filter = {where: {and: [{device: this.device},
+                              {date: {gt: new Date(this.dateFrom.value)}}, 
+                              {date: {lt: new Date(this.dateTo.value)}}]}};
 
     this.measureApi.find(filter).subscribe((measures: Measure[]) => { 
       console.log('Measures: ' + measures);

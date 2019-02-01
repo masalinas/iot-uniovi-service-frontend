@@ -13,6 +13,14 @@
             <mat-datepicker #dateToInput></mat-datepicker>                      
         </mat-form-field>
 
+        <mat-form-field>
+            <mat-select placeholder="Select Device" [(value)]="device">
+              <mat-option value="*">All</mat-option>
+              <mat-option value="TP01">Temperature</mat-option>
+              <mat-option value="RH01">Humidity</mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <div fxFlex></div>
         
         <button (click)="onLoad($event)" mat-fab color="primary">Load</button>

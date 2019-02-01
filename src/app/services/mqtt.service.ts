@@ -35,13 +35,14 @@ export class MQTTService {
     onConnected() {
         console.log("Connected");
 
-        this.client.subscribe('sensors/temperature');
-        //this.sendMessage('0.0');
+        //this.client.subscribe('sensors/temperature');
+        this.client.subscribe(AppConfigurator.getBrokerDeviceTopic());
     }
 
     sendMessage(message: string) {
         let packet = new Paho.MQTT.Message(message);
-        packet.destinationName = "sensors/temperature";
+        //packet.destinationName = "sensors/temperature";
+        packet.destinationName = AppConfigurator.getBrokerFeedbackTopic();
 
         this.client.send(packet);
     }
