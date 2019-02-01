@@ -16,12 +16,16 @@ declare var vis:any;
   styleUrls: ['./historic.component.css']
 })
 export class HistoricComponent implements OnInit {   
-  // initualize class attributes
+  // initialize class attributes
   title = 'Historic Graph';
   
   dateFrom = new FormControl(moment().startOf('day').toDate());
   dateTo = new FormControl(moment().endOf('day').toDate());
-  device = '*';
+  devices = [{name: '*', description: 'All'}, 
+             {name: 'TP01', description: 'Temperature'},
+             {name: 'RH01', description: 'Humidity'}];
+  ALL = '*';
+  selectedDevice;
 
   @ViewChild("historicContainer") container: ElementRef;
 
@@ -29,8 +33,8 @@ export class HistoricComponent implements OnInit {
   dataset = new vis.DataSet();  
   graph: any;
 
-  getGraphOption(id, name, color) {
-    return {
+  getGraphData(id, name, measures, data) {
+    var option = {
       id: id,
       content: name,
       drawPoints: function(id, item, group) {
@@ -53,6 +57,17 @@ export class HistoricComponent implements OnInit {
         }
       }
     };
+
+    this.groups.add(option);
+
+    measures.forEach(function(measure) {       
+      data.push({
+        group: id,
+        x: measure.date,
+        y: measure.value,
+        label: { content: measure.value, yOffset: 15}
+      });
+    });
   }
 
   onLoad(event: any) {      
@@ -60,11 +75,11 @@ export class HistoricComponent implements OnInit {
     console.log('dateTo: ' + this.dateTo.value);
 
     let filter: object;
-    if (this.device != '*')
+    if (this.selectedDevice == this.ALL)
       filter = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
                               {date: {lt: new Date(this.dateTo.value)}}]}};
     else
-      filter = {where: {and: [{device: this.device},
+      filter = {where: {and: [{device: this.selectedDevice.name},
                               {date: {gt: new Date(this.dateFrom.value)}}, 
                               {date: {lt: new Date(this.dateTo.value)}}]}};
 
@@ -72,14 +87,36 @@ export class HistoricComponent implements OnInit {
       console.log('Measures: ' + measures);
 
       // fill graph dataset
-      let data = [];
-      measures.forEach((element, index) => {
+      let deviceMeasures;
+      let count = 1;
+      this.groups.clear()
+      let data = [];      
+      if (this.selectedDevice == this.ALL) {
+        this.devices.forEach((device) => {
+          deviceMeasures = measures.filter(measure => measure.device === device.name);
+
+          if (deviceMeasures.length > 0)
+            this.getGraphData(count, device.description, deviceMeasures, data);
+
+          count++;
+        })
+      } else {
+        deviceMeasures = measures.filter(measure => measure.device === this.selectedDevice);
+
+        if (deviceMeasures.length > 0)
+            this.getGraphData(1, this.selectedDevice, deviceMeasures, data);
+
+          count++;
+      }
+
+      // fill graph dataset
+      /*measures.forEach((element, index) => {
         data.push({
           x: element.date,
           y: element.value,
           label: { content: element.value, yOffset: 15}
         });
-      }); 
+      });*/ 
 
       // set graph dataset
       this.graph.setItems(data);
@@ -103,6 +140,9 @@ export class HistoricComponent implements OnInit {
   }
 
   public ngOnInit(): void {  
+    // initialize device collection
+    this.selectedDevice = '*';
+
     // graph configuration
     const options = {
       drawPoints: function(item, group) {

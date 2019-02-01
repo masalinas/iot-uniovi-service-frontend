@@ -14,11 +14,11 @@
         </mat-form-field>
 
         <mat-form-field>
-            <mat-select placeholder="Select Device" [(value)]="device">
-              <mat-option value="*">All</mat-option>
-              <mat-option value="TP01">Temperature</mat-option>
-              <mat-option value="RH01">Humidity</mat-option>
-            </mat-select>
+            <mat-select placeholder="Select device" [(ngModel)]="selectedDevice">
+                <mat-option *ngFor="let device of devices" [value]="device.name">
+                    {{device.description}}
+                </mat-option>
+            </mat-select>                
         </mat-form-field>
 
         <div fxFlex></div>
