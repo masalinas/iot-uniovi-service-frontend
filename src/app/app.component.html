@@ -1,16 +1,27 @@
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
+<div fxLayaout>
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+
+    <div style="text-align:center" fxFlex="100">
+      <h1>
+        Welcome to {{ title }}!
+      </h1>
+    </div>
+    <div fxFlex="10" style="text-align:center">
+      <app-mqtt></app-mqtt>
+    </div>
+  </div>
+
 </div>
 
 <br><br>
 
 <mat-tab-group>
   <mat-tab label="REALTIME">
-    <realtime></realtime>
+    <!--<realtime></realtime>-->
+    <app-amcharts-realtime></app-amcharts-realtime>
   </mat-tab>
   <mat-tab label="HISTORIC">
-    <historic></historic>
+    <!-- <historic></historic>-->
+    <app-amcharts-historic></app-amcharts-historic>
   </mat-tab>
 </mat-tab-group>
