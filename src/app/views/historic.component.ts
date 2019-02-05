@@ -70,18 +70,22 @@ export class HistoricComponent implements OnInit {
     });
   }
 
-  onLoad(event: any) {      
-    console.log('dateFrom: ' + this.dateFrom.value);
-    console.log('dateTo: ' + this.dateTo.value);
+  onLoad(event: any) {    
+    // get firts and last date from filter  
+    let from =  new FormControl(moment(this.dateFrom.value).startOf('day').toDate());
+    let to =  new FormControl(moment(this.dateTo.value).endOf('day').toDate());
+
+    console.log('dateFrom: ' + from);
+    console.log('dateTo: ' + to);
 
     let filter: object;
     if (this.selectedDevice == this.ALL)
-      filter = {where: {and: [{date: {gt: new Date(this.dateFrom.value)}}, 
-                              {date: {lt: new Date(this.dateTo.value)}}]}};
+      filter = {where: {and: [{date: {gt: from.value}}, 
+                              {date: {lt: to.value}}]}};
     else
       filter = {where: {and: [{device: this.selectedDevice.name},
-                              {date: {gt: new Date(this.dateFrom.value)}}, 
-                              {date: {lt: new Date(this.dateTo.value)}}]}};
+                              {date: {gt: new Date(from.value)}}, 
+                              {date: {lt: new Date(to.value)}}]}};
 
     this.measureApi.find(filter).subscribe((measures: Measure[]) => { 
       console.log('Measures: ' + measures);
