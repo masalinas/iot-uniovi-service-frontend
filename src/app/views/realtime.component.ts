@@ -115,17 +115,21 @@ export class RealtimeComponent implements OnInit {
 
   constructor(private mqttService: MQTTService, private configurationApi: ConfigurationApi, private snackBar: MatSnackBar) {
     this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
+      var measure = JSON.parse(message);
+
       // console debug
-      console.log('Message arrived : ' + message);
+      console.log('Measure arrived : ' + message);
 
       // set x axis graph window
       this.renderStep();
-
-      // filter mqtt message
-      if (message > 0 && message < 40)
-        this.addDataPoint(message, false);
-      else
-        this.addDataPoint(message, true);
+      
+      // filter mqtt measure
+      if (measure.device == 'TP01') {
+        if (measure.value > 0 && measure.value < 40)
+          this.addDataPoint(measure.value, false);
+        else
+          this.addDataPoint(measure.value, true);
+      }
     });
   }
 }

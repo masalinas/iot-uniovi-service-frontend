@@ -13,6 +13,14 @@
             <mat-datepicker #dateToInput></mat-datepicker>                      
         </mat-form-field>
 
+        <mat-form-field>
+            <mat-select placeholder="Select device" [(ngModel)]="selectedDevice">
+                <mat-option *ngFor="let device of devices" [value]="device.name">
+                    {{device.description}}
+                </mat-option>
+            </mat-select>                
+        </mat-form-field>
+
         <div fxFlex></div>
         
         <button (click)="onLoad($event)" mat-fab color="primary">Load</button>

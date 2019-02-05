@@ -37,8 +37,6 @@ export class AmchartsHistoricComponent implements AfterViewInit {
 
         this.zone.runOutsideAngular(() => {
 
-
-            // const chart = am4core.create('chartdiv', am4charts.XYChart);
             const chart = am4core.create(this.historicAmcharts.nativeElement, am4charts.XYChart);
 
             chart.paddingRight = 20;

@@ -1,10 +1,9 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import {Paho} from 'ng2-mqtt/mqttws31';
+import { Paho } from 'ng2-mqtt/mqttws31';
 
-import {interval} from 'rxjs';
-
-const reconnectTimeout: number = 3000; // 3 seconds
-let isDone = false;
+import { interval } from 'rxjs';
+/** import angular environment variables **/
+import { AppConfigurator } from '../shared/app.configurator';
 
 @Injectable()
 export class MQTTService {
@@ -18,21 +17,25 @@ export class MQTTService {
     }
 
     connect() {
-        this.client = new Paho.MQTT.Client('127.0.0.1', 8085, 'web_client');
+        this.client = new Paho.MQTT.Client(AppConfigurator.getBrokerHostname(), 
+        AppConfigurator.getBrokerPort(),
+        AppConfigurator.getBrokerClientId());
 
         //this.onMessage();
         //this.onConnectionLost();
-// set callback handlers
+        // set callback handlers
         this.client.onConnectionLost = this.onConnectionLost.bind(this);
         this.client.onMessageArrived = this.onMessage.bind(this);
         try {
-            this.client.connect({useSSL: false,
+            this.client.connect({
+                useSSL: false,
                 userName: 'admin',
                 password: 'uniovi',
                 timeout: 10,
                 keepAliveInterval: 60,
                 onFailure: this.onFailure.bind(this),
-                onSuccess: this.onConnected.bind(this)});
+                onSuccess: this.onConnected.bind(this)
+            });
         } catch (ex) {
             console.log(ex);
         }
@@ -45,19 +48,21 @@ export class MQTTService {
     onConnected() {
         console.log('Connected');
         this.onMqttConnected.emit(true);
-        this.client.subscribe('sensors/temperature');
+         // this.client.subscribe('sensors/temperature');
+         this.client.subscribe(AppConfigurator.getBrokerDeviceTopic());
         this.connected = true;
         // this.sendMessage('0.0');
     }
 
     sendMessage(message: string) {
         let packet = new Paho.MQTT.Message(message);
-        packet.destinationName = 'sensors/temperature';
+         // packet.destinationName = "sensors/temperature";
+         packet.destinationName = AppConfigurator.getBrokerFeedbackTopic();
 
         this.client.send(packet);
     }
 
-    onMessage(message: Paho.MQTT.Message)  {
+    onMessage(message: Paho.MQTT.Message) {
         this.onMqttMessageChanged.emit(message.payloadString);
     }
 
@@ -65,12 +70,7 @@ export class MQTTService {
         this.connected = false;
         this.onMqttConnectionLost.emit(true);
         this.client.onConnectionLost = (responseObject: Object) => {
-          console.log('Connection lost : ' + JSON.stringify(responseObject));
-                          
-          /*interval(reconnectTimeout).subscribe((value) => this.connect(),
-                                               (error) => console.error(error));*/
-
-          //setInterval(this.connect, reconnectTimeout);
+            console.log('Connection lost : ' + JSON.stringify(responseObject));
         };
-    }    
+    }
 }

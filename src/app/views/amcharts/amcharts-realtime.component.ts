@@ -28,20 +28,21 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
     constructor(private zone: NgZone, private measureApi: MeasureApi, private mqttService: MQTTService) {
         this.subcribe = this.mqttService.onMqttMessageChanged.subscribe((message) => {
             // console debug
-            /*
-            console.log(this.chart.data);
+            // console.log(this.chart.data);
+            let obj = JSON.parse(message);
             this.chart.addData({
                 date: new Date(),
-                value: Number(message),
+                value: Number(obj.value),
                 name: message
             });
-            */
+            /*
             this.chart.data.push({
                 date: new Date(),
                 value: Number(message),
                 name: message
             });
             this.chart.validateData();
+            */
         });
     }
 
@@ -49,7 +50,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
 
 
         const chart = am4core.create(this.realtimeAmcharts.nativeElement, am4charts.XYChart);
-
+        chart.zoomOutButton.disabled = true;
         chart.paddingRight = 20;
         // data for examples
         /*
@@ -59,15 +60,35 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
             this.data.push({ date: new Date(2018, 0, i), name: 'name' + i, value: visits });
         }
         */
+        for (let i = 0; i <= 30; i++) {
+
+            this.data.push({ date: new Date().setSeconds(i - 30) });
+        }
         chart.data = this.data;
 
         const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         dateAxis.renderer.grid.template.location = 0;
+        //dateAxis.renderer.nonScaling = true;
+        dateAxis.renderer.minGridDistance = 25;
+        dateAxis.baseInterval = { timeUnit: 'second', count: 1 };
+        dateAxis.dateFormats.setKey('second', 'ss');
+        dateAxis.periodChangeDateFormats.setKey('second', '[bold]h:mm a');
+        dateAxis.periodChangeDateFormats.setKey('minute', '[bold]h:mm a');
+        dateAxis.periodChangeDateFormats.setKey('hour', '[bold]h:mm a');
+        dateAxis.renderer.inside = true;
+        dateAxis.renderer.axisFills.template.disabled = true;
+        dateAxis.renderer.ticks.template.disabled = true;
+        //dateAxis.markUnitChange = false;
 
         const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         valueAxis.tooltip.disabled = true;
-        valueAxis.renderer.minWidth = 35;
-        valueAxis.renderer.grid.template.location = 0;
+        //valueAxis.interpolationDuration = 500;
+        //valueAxis.rangeChangeDuration = 500;
+        valueAxis.renderer.inside = true;
+        valueAxis.renderer.minLabelPosition = 0.05;
+        valueAxis.renderer.maxLabelPosition = 0.95;
+        valueAxis.renderer.axisFills.template.disabled = true;
+        valueAxis.renderer.ticks.template.disabled = true;
         valueAxis.title.text = 'Temmperature ºC';
 
 
@@ -78,7 +99,16 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
         // series.tooltipText = '{Date}: [bold]{valueY}[/]';
         // series.cursorTooltipEnabled = true;
         // series.bullets.push(new am4charts.CircleBullet());
-        series.tensionX = 0.93;
+        series.interpolationDuration = 500;
+        series.defaultState.transitionDuration = 0;
+        series.tensionX = 0.8;
+
+        dateAxis.interpolationDuration = 500;
+        dateAxis.rangeChangeDuration = 500;
+
+        chart.events.on('datavalidated', function () {
+            dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true);
+        });
 
         // add point circle for value
 
@@ -109,12 +139,47 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
 
         // chart.cursor = new am4charts.XYCursor();
 
-        const scrollbarX = new am4charts.XYChartScrollbar();
-        scrollbarX.series.push(series);
-        chart.scrollbarX = scrollbarX;
+        // const scrollbarX = new am4charts.XYChartScrollbar();
+        // scrollbarX.series.push(series);
+        // chart.scrollbarX = scrollbarX;
 
+        // this makes date axis labels which are at equal minutes to be rotated
+        dateAxis.renderer.labels.template.adapter.add("rotation", function (rotation, target) {
+            var dataItem = target.dataItem;
+            if (dataItem.date.getTime() == am4core.time.round(new Date(dataItem.date.getTime()), "minute").getTime()) {
+
+                target.verticalCenter = "middle";
+                target.horizontalCenter = "left";
+                return -90;
+            }
+            else {
+                target.verticalCenter = "bottom";
+                target.horizontalCenter = "middle";
+                return 0;
+            }
+        })
         this.chart = chart;
-
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                if (interval) {
+                    clearInterval(interval);
+                }
+            } else {
+                startInterval();
+            }
+        }, false);
+        // add data
+        let interval;
+        function startInterval() {
+            interval = setInterval(function () {
+                const lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
+                chart.addData(
+                    { date: new Date(lastdataItem.dateX.getTime() + 1000) },
+                    1
+                );
+            }, 1000);
+        }
+        startInterval();
     }
 
     // tslint:disable-next-line:use-life-cycle-interface
