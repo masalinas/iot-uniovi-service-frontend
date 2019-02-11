@@ -1,0 +1,12 @@
+<div *ngIf="connected; then iconConnected else iconLostConnected"></div>
+<ng-template #iconConnected>
+    <span class="material-icons" [ngStyle]="{'color': color}" matBadgeOverlap="false" [matBadge]=" "
+        matBadgeColor="" matTooltip="Conectado a server mqtt. Mensajes recibidos: {{receiveMessage}}">
+        signal_wifi_4_bar
+    </span>
+</ng-template>
+<ng-template #iconLostConnected>
+    <span class="material-icons" [ngStyle]="{'color': color}" matBadgeOverlap="false" [matBadge]="connect"
+        matBadgeColor="warn" matTooltip="NO conectado server mqtt. Intento de conexion: {{connect}}">signal_wifi_off
+    </span>
+</ng-template>
