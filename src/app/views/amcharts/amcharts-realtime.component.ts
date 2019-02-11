@@ -144,7 +144,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
         // chart.scrollbarX = scrollbarX;
 
         // this makes date axis labels which are at equal minutes to be rotated
-        dateAxis.renderer.labels.template.adapter.add("rotation", function (rotation, target) {
+        /*dateAxis.renderer.labels.template.adapter.add("rotation", function (rotation, target) {
             var dataItem = target.dataItem;
             if (dataItem.date.getTime() == am4core.time.round(new Date(dataItem.date.getTime()), "minute").getTime()) {
 
@@ -157,7 +157,8 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
                 target.horizontalCenter = "middle";
                 return 0;
             }
-        })
+        })*/
+
         this.chart = chart;
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
