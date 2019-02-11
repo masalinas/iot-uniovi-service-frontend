@@ -173,8 +173,9 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
                     return 0;
                 }
             });
-            let config = this.getConfig('init');
-            config.visible = false;
+            let config = {}
+            config = this.getConfig('init');
+            config['visible'] = false;
             this.createSeries(config);
 
             this.startInterval();
@@ -211,8 +212,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
     createSeries(config: any) {
         const series = this.chart.series.push(new am4charts.LineSeries());
         series.config = config;
-        
-        
+
     }
     getConfig(device) {
         const config = {
@@ -258,8 +258,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
                 config.dataFields.valueY = '';
                 config.bullets = [];
                 config.adapter = [];
-                config.legendSettings.createMaker = false;
-                
+                config['legendSettings'] = {createMaker : false};
                 break;
             case 'TP01':
                 config.dataFields.valueY = device;
