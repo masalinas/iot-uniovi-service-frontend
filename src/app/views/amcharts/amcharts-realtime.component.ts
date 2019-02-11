@@ -66,7 +66,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
         this.zone.runOutsideAngular(() => {
             this.chart = am4core.create(this.realtimeAmcharts.nativeElement, am4charts.XYChart);
             this.chart.legend = new am4charts.Legend();
-            //this.chart.legend.useDefaultMarker = true;
+            // this.chart.legend.useDefaultMarker = true;
             this.chart.zoomOutButton.disabled = true;
             this.chart.padding(10, 10, 10, 10);
             // data for examples
@@ -173,9 +173,9 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
                     return 0;
                 }
             });
-            let config = {}
+            let config = {};
             config = this.getConfig('init');
-            config['visible'] = false;
+            // config['visible'] = false;
             this.createSeries(config);
 
             this.startInterval();
@@ -184,22 +184,17 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
     startInterval() {
         const series = this.chart;
         this.interval = setInterval(function () {
-            const lastdataItem = series.dataItems.last;
+            // const lastdataItem: am4core.DataItem = series.dataItems.last;
+            const lastdat = series.dataItems.getIndex(series.dataItems.length - 1);
+            const lastdataItem = series.data[series.data.length - 1];
             if (series.data.length > 100) {
                 series.addData(
-                    { date: new Date(lastdataItem.dataContext.date.getTime() + 1000) }, 1
-                );
+                    { date: new Date(lastdataItem.date.getTime() + 1000) }, 1);
             } else {
                 if (lastdataItem) {
-                    if (lastdataItem.dataContext.date.getTime) {
-                        series.addData(
-                            { date: new Date(lastdataItem.dataContext.date.getTime() + 1000) }
-                        );
-                    } else {
-                        series.addData(
-                            { date: new Date(lastdataItem.dataContext.date + 1000) }
-                        );
-                    }
+                    series.addData(
+                        { date: new Date(lastdataItem.date.getTime() + 1000) }
+                    );
                 } else {
                     series.addData(
                         { date: new Date() }
@@ -214,13 +209,14 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
         series.config = config;
 
     }
+    
     getConfig(device) {
         const config = {
             dataFields: {
                 dateX: 'date',
                 valueY: 'value'
             },
-           // legendSettings: {createMaker: false},
+            legendSettings: {createMaker: false},
             tooltipText: '{valueY.value}',
             interpolationDuration: 500,
             tensionX: 0.9,
