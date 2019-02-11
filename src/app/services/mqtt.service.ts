@@ -12,14 +12,15 @@ export class MQTTService {
     onMqttConnectionLost = new EventEmitter<boolean>(true);
     onMqttConnected = new EventEmitter<boolean>(false);
     connected = false;
+    configurator = AppConfigurator;
     constructor() {
         // this.connect();
     }
 
     connect() {
-        this.client = new Paho.MQTT.Client(AppConfigurator.getBrokerHostname(), 
-        AppConfigurator.getBrokerPort(),
-        AppConfigurator.getBrokerClientId());
+        this.client = new Paho.MQTT.Client(this.configurator.getBrokerHostname(), 
+        this.configurator.getBrokerPort(),
+        this.configurator.getBrokerClientId());
 
         //this.onMessage();
         //this.onConnectionLost();
@@ -43,7 +44,9 @@ export class MQTTService {
     }
     onFailure(invocationContext, errorCode) {
         this.onMqttConnectionLost.emit(true);
-        console.log('fallo');
+        // tslint:disable-next-line:no-bitwise
+        const messageError = invocationContext.errorMessage;
+        console.log(messageError);
     }
     onConnected() {
         console.log('Connected');

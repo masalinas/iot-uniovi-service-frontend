@@ -7,8 +7,8 @@ import { MeasureApi } from '../../shared/sdk/services';
 import { FormControl } from '@angular/forms';
 import { MQTTService } from '../../services/mqtt.service';
 import { any } from '@amcharts/amcharts4/.internal/core/utils/Array';
-
-
+import * as moment from 'moment';
+import {MatSnackBar, DateAdapter} from '@angular/material';
 am4core.useTheme(am4themes_animated);
 
 @Component({
@@ -21,16 +21,21 @@ am4core.useTheme(am4themes_animated);
 export class AmchartsHistoricComponent implements AfterViewInit {
 
     private chart: am4charts.XYChart;
-
+    dateFrom = new FormControl(moment().startOf('day').toDate());
+    dateTo = new FormControl(moment().endOf('day').toDate());
+    devices = [{ name: '*', description: 'All' },
+    { name: 'TP01', description: 'Temperature' },
+    { name: 'RH01', description: 'Humidity' }];
+    ALL = '*';
+    selectedDevice;
     @ViewChild('historicAmcharts') historicAmcharts: ElementRef;
 
-
-    dateFrom = new FormControl(new Date());
-    dateTo = new FormControl(new Date());
     data = [];
     subcribe = any;
-    constructor(private zone: NgZone, private measureApi: MeasureApi, private mqttService: MQTTService) {
-
+ 
+    constructor(private zone: NgZone, private measureApi: MeasureApi, private mqttService: MQTTService, private dateAdapter: DateAdapter<Date>) {
+        // set locale settings
+        this.dateAdapter.setLocale('es');
     }
 
     ngAfterViewInit() {

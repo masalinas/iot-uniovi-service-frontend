@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MQTTService } from '../services/mqtt.service';
+import { MQTTService } from '../../services/mqtt.service';
 
 @Component({
   selector: 'app-mqtt',
