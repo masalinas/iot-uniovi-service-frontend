@@ -34,8 +34,9 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
 
             if (this.device[obj.device] === undefined) {
                 this.device[obj.device] = true;
-                const config = this.getConfig(obj.device);
-                config.name = obj.device;
+                let config = {};
+                config = this.getConfig(obj.device);
+                config['name'] = obj.device;
                 this.createSeries(config);
             }
             const data = {
