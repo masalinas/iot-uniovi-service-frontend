@@ -260,7 +260,7 @@ export class AmchartsRealTimeComponent implements AfterViewInit {
                 config.dataFields.valueY = device;
                 // config
                 break;
-            case 'HM01':
+            case 'RH01':
                 config.dataFields.valueY = device;
                 config.bullets[0].type = 'Rectangle';
                 // config
