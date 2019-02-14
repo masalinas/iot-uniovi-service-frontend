@@ -18,7 +18,6 @@ export class MqttComponent implements OnInit {
   constructor(private mqttService: MQTTService) {
     this.mqttService.onMqttMessageChanged.subscribe((message) => {
       this.receiveMessage += 1;
-      console.log('receiver message');
     });
     this.mqttService.onMqttConnectionLost.subscribe((lost) => {
       console.log('conection lost');
