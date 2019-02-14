@@ -150,9 +150,6 @@ export class HistoricComponent implements OnInit, AfterViewInit {
   createValueAxis(title: string) {
     // ******* Axis Y
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
-    // valueAxis.tooltip.disabled = true;
-    valueAxis.renderer.axisFills.template.disabled = true;
-    valueAxis.renderer.ticks.template.disabled = true;
     valueAxis.title.text = title;
     return valueAxis;
   }

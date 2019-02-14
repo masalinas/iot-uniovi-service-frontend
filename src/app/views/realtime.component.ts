@@ -57,7 +57,7 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
         name: message
       };
       data[obj.device] = Number(obj.value);
-      if (this.chart.data.length > 100) {
+      if (this.chart.data.length > 90) {
         this.chart.addData(data, 1);
       } else {
         this.chart.addData(data);
