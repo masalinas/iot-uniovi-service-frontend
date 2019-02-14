@@ -27,6 +27,7 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
   private interval;
   data = [];
   device = {};
+  dataInterval = [];
   private seriesInit: am4charts.LineSeries;
   frequency = new FormControl(10);
   onMqttMessageChangedEventHandler: EventEmitter<String>;
@@ -114,11 +115,13 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
    */
   startInterval() {
     const series = this.chart;
+    const dataInterval = this.dataInterval;
     this.interval = setInterval(function () {
       // const lastdataItem: am4core.DataItem = series.dataItems.last;
       const lastdat = series.dataItems.getIndex(series.dataItems.length - 1);
       const lastdataItem = series.data[series.data.length - 1];
-      if (series.data.length > 100) {
+      if (dataInterval.length > 60) {
+        dataInterval.splice(60, 1);
         series.addData(
           { date: new Date(lastdataItem.date.getTime() + 1000) }, 1);
       } else {
@@ -131,8 +134,8 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
             { date: new Date() }
           );
         }
-
       }
+      dataInterval.push('');
     }, 1000);
   }
   /**

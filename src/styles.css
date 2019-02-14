@@ -9,3 +9,24 @@
 .alarm {
     fill:red;
 }
+html, body{
+    height: 90%;
+}
+.mat-tab-group{
+    height: 100%;
+}
+.mat-tab-body-wrapper {
+    flex-grow: 1;
+}
+
+.mat-tab-body {
+    display: flex !important;
+    flex-direction: column;
+}
+
+.mat-tab-body-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+ 

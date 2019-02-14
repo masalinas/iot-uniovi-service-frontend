@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutWrap>
+<div fxLayout="column" fxLayoutWrap style="height: 95%; width: 100%">
     <!-- filter Realtime graph -->
     <div fxLayout="row" fxLayoutWrap fxLayoutGap="10px" fxLayoutAlign="left">        
         <mat-form-field>        
@@ -9,8 +9,7 @@
         <div fxFlex></div>
 
         <button (click)="onSaveFrequency($event)" mat-fab color="primary">Save</button>
-    </div>
-
+    </div> 
     <!-- graph -->
-    <div id="chartdiv" #realTimeContainer style="width: 100%; height: 500px"></div>
+<div id="chartdiv" #realTimeContainer style="width: 100%; height: 100%"></div>
 </div>
