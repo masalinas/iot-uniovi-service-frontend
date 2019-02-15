@@ -257,11 +257,6 @@ export class HistoricComponent implements OnInit, AfterViewInit {
       }
     };
 
-    let container = this.container.nativeElement;
-    this.graph = new vis.Graph2d(container, this.dataset, options);
-
-    // resize the graph to expand
-    //this.getScreenSize();
   }
 
 

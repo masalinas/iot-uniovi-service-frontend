@@ -1,15 +1,15 @@
 <div fxLayout="column" fxLayoutWrap style="height: 95%; width: 100%">
     <!-- filter Realtime graph -->
-    <div fxLayout="row" fxLayoutWrap fxLayoutGap="10px" fxLayoutAlign="left">        
-        <mat-form-field>        
+    <div fxLayout="row" fxLayoutWrap fxLayoutGap="10px" fxLayoutAlign="left">
+        <mat-form-field>
             <input matInput type="number" min="1" max="60" placeholder="Frecuency [minutes]" [formControl]="frequency">
             <mat-hint align="end">{{ getFrequencyLength() }} / 2</mat-hint>
         </mat-form-field>
-        
+
         <div fxFlex></div>
 
         <button (click)="onSaveFrequency($event)" mat-fab color="primary">Save</button>
-    </div> 
+    </div>
     <!-- graph -->
-<div id="chartdiv" #realTimeContainer style="width: 100%; height: 100%"></div>
+    <div id="chartdiv" #realTimeContainer style="width: 100%; height: 100%"></div>
 </div>
