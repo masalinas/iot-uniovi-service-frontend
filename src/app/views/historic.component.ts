@@ -72,7 +72,7 @@ export class HistoricComponent implements OnInit, AfterViewInit {
      } else {
       filter = {
         where: {
-          and: [{ device: this.selectedDevice.name },
+          and: [{ device: this.selectedDevice },
           { date: { gt: new Date(from.value) } },
           { date: { lt: new Date(to.value) } }]
         }
