@@ -93,7 +93,7 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
       this.startInterval();
     });
   }
-  private getFrequencyLength(): string {
+  public getFrequencyLength(): string {
     return this.frequency.value.toString().length;
   }
 
