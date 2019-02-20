@@ -3,9 +3,9 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 /* vis.js styles */
-@import "node_modules/vis/dist/vis.min.css";
+/* @import "node_modules/vis/dist/vis.min.css"; 
 @import "node_modules/vis/dist/vis-timeline-graph2d.min.css";
-
+*/
 .alarm {
     fill:red;
 }
