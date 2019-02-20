@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MQTTService } from '../../services/mqtt.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-mqtt',
@@ -10,17 +11,18 @@ export class MqttComponent implements OnInit {
 
   connected = false;
   lostConnected = true;
-  receivemessage: any;
   color = 'red';
-  receiveMessage = 0;
+  lastupdate: string;
   connect = 0;
 
   constructor(private mqttService: MQTTService) {
     this.mqttService.onMqttMessageChanged.subscribe((message) => {
-      this.receiveMessage += 1;
+      this.lastupdate = moment().locale('en').format("DD/MM/YYYY HH:mm:ss");
     });
+
     this.mqttService.onMqttConnectionLost.subscribe((lost) => {
       console.log('conection lost');
+
       this.color = 'red';
       this.connected = false;
       this.connect += 1;
@@ -30,18 +32,15 @@ export class MqttComponent implements OnInit {
       this.connect = 0;
       this.color = 'green';
       this.connected = true;
+
       console.log('connected');
     });
-
   }
 
   ngOnInit() {
-    this.color = (this.mqttService.connected)
-      ? 'green'
-      : 'red';
+    this.color = (this.mqttService.connected) ? 'green' : 'red';
 
-    if (!this.mqttService.connected) {
-      this.mqttService.connect();
-    }
+    if (!this.mqttService.connected)
+      this.mqttService.connect();    
   }
 }
