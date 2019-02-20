@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild, ElementRef, EventEmitter } from '@angular
 import { AppConfigurator } from './shared/app.configurator';
 import { LoopBackConfig, LoggerService } from './shared/sdk/';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

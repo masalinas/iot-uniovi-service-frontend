@@ -37,21 +37,24 @@ export class HistoricComponent implements OnInit, AfterViewInit {
   @ViewChild('historicContainer') historicContainer: ElementRef;
 
 
-  constructor(private zone: NgZone, private measureApi: MeasureApi
-    , private snackBar: MatSnackBar, private dateAdapter: DateAdapter<Date>) {
-    // set locale settings
-    this.dateAdapter.setLocale('es');
+  constructor(
+    private zone: NgZone, 
+    private measureApi: MeasureApi,
+    private snackBar: MatSnackBar, 
+    private dateAdapter: DateAdapter<Date>) {
+      this.dateAdapter.setLocale('es');
   }
+
   /**
     * Implementations for after load html
     */
   ngAfterViewInit() {
-
     this.zone.runOutsideAngular(() => {
       this.chart = am4core.create(this.historicContainer.nativeElement, am4charts.XYChart);
       this.chart.colors.step = 5;
       this.chart.legend = new am4charts.Legend();
       this.chart.cursor = new am4charts.XYCursor();
+
       this.createDateAxis();
     });
   }
@@ -62,6 +65,7 @@ export class HistoricComponent implements OnInit, AfterViewInit {
     const to = new FormControl(moment(this.dateTo.value).endOf('day').toDate());
 
     let filter: object;
+
     if (this.selectedDevice === this.ALL) {
       filter = {
         where: {
@@ -77,7 +81,8 @@ export class HistoricComponent implements OnInit, AfterViewInit {
           { date: { lt: new Date(to.value) } }]
         }
       };
-    }
+    };
+
     this.device = {};
     this.deviceUnit = [];
     this.chart.data = [];
@@ -86,76 +91,79 @@ export class HistoricComponent implements OnInit, AfterViewInit {
     });
     this.chart.series.clear();
     const scrollbarX = new am4charts.XYChartScrollbar();
+
     this.measureApi.find(filter).subscribe((measures: Measure[]) => {
        measures.forEach((message) => {
           if (this.device[message.device] === undefined ) {
               this.device[message.device] = true;
-              let config = {};
-              config = this.getConfig(message.device);
+              let config = this.getConfig(message.device);
               config['name'] = message.device;
               const title_axis = this.getDeviceUnit(message.device);
               const series = this.createSeries(config, title_axis);
+
               scrollbarX.series.push(series);
-          }
+          };
+
           const data = {
             date: new Date(message.date),
             name: message.device
           };
+
           data[message.device] = message.value;
           this.chart.addData(data);
         });
+
         this.chart.scrollbarX = scrollbarX;
-      this.snackBar.open('The historize was loaded!', 'Ok', {
+        this.snackBar.open('The historize was loaded!', 'Ok', {          
         duration: 2000,
       });
-
     },
-      error => {
+    error => {
         this.snackBar.open('ERROR: The historize load failed!', 'Ok', {
           duration: 2000,
         });
         console.log(error);
-      });
+    });
   }
 
    /**
    * Create series in chart from config
-   * @param config
    */
   createSeries(config: any, title_axis) {
     const series = new am4charts.LineSeries();
-    // const bullet = series.bullets.push(new am4charts.CircleBullet());
     series.config = config;
     const deviceUnit = this.deviceUnit.indexOf(title_axis);
+
     if (deviceUnit === -1) {
       this.deviceUnit.push(title_axis);
       const valueAxis = this.createValueAxis(title_axis);
       series.yAxis = valueAxis;
     }
+
     this.chart.series.push(series);
+
     return series;
   }
+
   /**
    * Create axis in coord X
    */
   createDateAxis() {
-
-    // ******** Axis X
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.grid.template.location = 0;
   }
+
   /**
    * Create axis in coord Y
    */
   createValueAxis(title: string) {
-    // ******* Axis Y
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
     valueAxis.title.text = title;
+
     return valueAxis;
   }
   /**
    * config series from device
-   * @param device
    */
   getConfig(device) {
     const config = {
@@ -169,6 +177,7 @@ export class HistoricComponent implements OnInit, AfterViewInit {
       tensionX: 0.9,
       bullets: []
     };
+
     switch (device) {
       case 'init':
         config.dataFields.valueY = '';
@@ -182,8 +191,8 @@ export class HistoricComponent implements OnInit, AfterViewInit {
             stroke: '#fff',
             strokeWidth: 3
           }
-        }
-        ];
+        }];
+
         break;
       case 'RH01':
         config.dataFields.valueY = device;
@@ -198,20 +207,21 @@ export class HistoricComponent implements OnInit, AfterViewInit {
               stroke: '#fff',
               strokeWidth: 2
           }]
-        }
-        ];
+        }];
         break;
+
       default:
       // default config
     }
     return config;
   }
+
   /**
    * Methods mock fake device unit
-   * @param device
    */
   getDeviceUnit(device) {
     let unit = '';
+
     switch (device) {
       case 'init':
         unit = 'init';
@@ -225,6 +235,7 @@ export class HistoricComponent implements OnInit, AfterViewInit {
       default:
       // default config
     }
+
     return unit;
   }
 
@@ -256,8 +267,5 @@ export class HistoricComponent implements OnInit, AfterViewInit {
         }
       }
     };
-
   }
-
-
 }

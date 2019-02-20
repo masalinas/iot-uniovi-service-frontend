@@ -1,15 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef, EventEmitter, AfterViewInit, NgZone } from '@angular/core';
 
-import * as am4core from '@amcharts/amcharts4/core';
-import * as am4charts from '@amcharts/amcharts4/charts';
-
-import { FormControl } from '@angular/forms';
-
-import { MatSnackBar } from '@angular/material';
-
 import { MQTTService } from '../services/mqtt.service';
 import { Configuration } from '../shared/sdk/models';
 import { ConfigurationApi } from '../shared/sdk/services';
+
+import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
+import * as am4core from '@amcharts/amcharts4/core';
+import * as am4charts from '@amcharts/amcharts4/charts';
+
 import { any } from '@amcharts/amcharts4/.internal/core/utils/Array';
 
 const KEY = 'FREQUENCY';
@@ -32,43 +31,58 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
   frequency = new FormControl(10);
   onMqttMessageChangedEventHandler: EventEmitter<String>;
 
-  constructor(private zone: NgZone, private mqttService: MQTTService,
-    private configurationApi: ConfigurationApi, private snackBar: MatSnackBar) {
-    this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
-      const obj = JSON.parse(message);
+  constructor(
+    private zone: NgZone, 
+    private mqttService: MQTTService,
+    private configurationApi: ConfigurationApi, 
+    private snackBar: MatSnackBar) {
+      this.onMqttMessageChangedEventHandler = this.mqttService.onMqttMessageChanged.subscribe((message) => {
+        const obj = JSON.parse(message);
 
-      if (this.device[obj.device] === undefined) {
-        this.device[obj.device] = true;
-        let config = {};
-        config = this.getConfig(obj.device);
-        config['name'] = obj.device;
-        const title_axis = this.getDeviceUnit(obj.device);
-        // this.createValueAxis(title_axis);
-        this.createSeries(config, title_axis);
-        // remove init series from load first data from mqtt message
-        if (this.seriesInit !== undefined) {
-          this.chart.series.getIndex(this.chart.series.indexOf(this.seriesInit)).yAxis.removeChildren();
-          this.chart.series.removeIndex(this.chart.series.indexOf(this.seriesInit)).dispose();
-          this.seriesInit = undefined;
+        if (this.device[obj.device] === undefined) {
+          this.device[obj.device] = true;
+
+          let config = this.getConfig(obj.device);
+          config['name'] = obj.device;
+          
+          const title_axis = this.getDeviceUnit(obj.device);        
+          this.createSeries(config, title_axis);
+
+          // remove init series from load first data from mqtt message
+          if (this.seriesInit !== undefined) {
+            this.chart.series.getIndex(this.chart.series.indexOf(this.seriesInit)).yAxis.removeChildren();
+            this.chart.series.removeIndex(this.chart.series.indexOf(this.seriesInit)).dispose();
+            this.seriesInit = undefined;
+          }
         }
-      }
-      const data = {
-        date: new Date(),
-        name: message
-      };
-      data[obj.device] = Number(obj.value);
-      if (this.chart.data.length > 90) {
-        this.chart.addData(data, 1);
-      } else {
-        this.chart.addData(data);
-      }
+
+        const data = {
+          date: new Date(),
+          name: message
+        };
+
+        data[obj.device] = Number(obj.value);
+
+        if (this.chart.data.length > 90)
+          this.chart.addData(data, 1);
+        else 
+          this.chart.addData(data);      
     });
   }
 
   public ngOnInit(): void {
-
     this.configurationApi.getByKey(KEY).subscribe((configuration: Configuration) => {
       this.frequency.setValue(configuration.value);
+    });
+  }
+
+
+  ngOnDestroy() {
+    clearInterval(this.interval);
+    this.zone.runOutsideAngular(() => {
+      if (this.chart) {
+        this.chart.dispose();
+      }
     });
   }
 
@@ -76,27 +90,23 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     * Implementations for after load html
     */
   ngAfterViewInit() {
-
     this.zone.runOutsideAngular(() => {
       this.chart = am4core.create(this.realTimeContainer.nativeElement, am4charts.XYChart);
       this.chart.colors.step = 5;
       this.chart.legend = new am4charts.Legend();
       this.chart.zoomOutButton.disabled = true;
-      // this.chart.padding(10, 10, 10, 10);
 
-      let config = {};
-      config = this.getConfig('init');
+      let config = this.getConfig('init');
+
       this.createDateAxis();
-      // this.createValueAxis('');
       this.seriesInit = this.createSeries(config, 'init');
-      // this.createValueAxis();
       this.startInterval();
     });
   }
+
   public getFrequencyLength(): string {
     return this.frequency.value.toString().length;
   }
-
 
   onSaveFrequency(event: any) {
     this.configurationApi.updateKey(KEY, this.frequency.value).subscribe((configuration: Configuration) => {
@@ -107,8 +117,6 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
       });
     });
   }
-
-
 
   /**
    * Begin interval one 1 seconds and add date
@@ -138,28 +146,29 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
       dataInterval.push('');
     }, 1000);
   }
+  
   /**
    * Create series in chart from config
-   * @param config
    */
   createSeries(config: any, title_axis) {
     const valueAxis = this.createValueAxis(title_axis);
     const series = new am4charts.LineSeries();
-    // const bullet = series.bullets.push(new am4charts.CircleBullet());
+    
     series.config = config;
     series.yAxis = valueAxis;
+    
     this.chart.series.push(series);
+
     return series;
   }
+
   /**
    * Create axis in coord X
    */
   createDateAxis() {
-
-    // ******** Axis X
     const dateAxis = this.chart.xAxes.push(new am4charts.DateAxis());
+
     dateAxis.renderer.grid.template.location = 0;
-    // dateAxis.renderer.nonScaling = true;
     dateAxis.renderer.minGridDistance = 25;
     dateAxis.baseInterval = { timeUnit: 'second', count: 1 };
     dateAxis.dateFormats.setKey('second', 'ss');
@@ -172,37 +181,38 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     dateAxis.interpolationDuration = 500;
     dateAxis.rangeChangeDuration = 500;
     // dateAxis.markUnitChange = false;
+
     // this makes date axis labels which are at equal minutes to be rotated
     dateAxis.renderer.labels.template.adapter.add('rotation', function (rotation, target) {
       const dataItem = target.dataItem;
       if (dataItem['date'].getSeconds() === 0) {
         target.verticalCenter = 'middle';
         target.horizontalCenter = 'left';
+
         return -90;
       } else {
         target.verticalCenter = 'bottom';
         target.horizontalCenter = 'middle';
+
         return 0;
       }
     });
   }
+
   /**
    * Create axis in coord Y
    */
   createValueAxis(title: string) {
-    // ******* Axis Y
     const valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
+
     valueAxis.tooltip.disabled = true;
-    // valueAxis.interpolationDuration = 500;
-    // valueAxis.rangeChangeDuration = 500;
-    // valueAxis.renderer.inside = true;
-    // valueAxis.renderer.minLabelPosition = 0.05;
-    // valueAxis.renderer.maxLabelPosition = 0.95;
     valueAxis.renderer.axisFills.template.disabled = true;
     valueAxis.renderer.ticks.template.disabled = true;
     valueAxis.title.text = title;
+
     return valueAxis;
   }
+
   getConfig(device) {
     const config = {
       name: device,
@@ -266,9 +276,9 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     }
     return config;
   }
+
   /**
    * Methods mock fake device unit
-   * @param device
    */
   getDeviceUnit(device) {
     let unit = '';
@@ -287,16 +297,4 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     }
     return unit;
   }
-
-
-  // tslint:disable-next-line:use-life-cycle-interface
-  ngOnDestroy() {
-    clearInterval(this.interval);
-    this.zone.runOutsideAngular(() => {
-      if (this.chart) {
-        this.chart.dispose();
-      }
-    });
-  }
-
 }
