@@ -76,7 +76,6 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     });
   }
 
-
   ngOnDestroy() {
     clearInterval(this.interval);
     this.zone.runOutsideAngular(() => {

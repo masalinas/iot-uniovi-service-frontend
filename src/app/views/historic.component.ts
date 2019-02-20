@@ -36,7 +36,6 @@ export class HistoricComponent implements OnInit, AfterViewInit {
 
   @ViewChild('historicContainer') historicContainer: ElementRef;
 
-
   constructor(
     private zone: NgZone, 
     private measureApi: MeasureApi,
@@ -162,6 +161,7 @@ export class HistoricComponent implements OnInit, AfterViewInit {
 
     return valueAxis;
   }
+
   /**
    * config series from device
    */
