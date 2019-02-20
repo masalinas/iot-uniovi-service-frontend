@@ -9,8 +9,6 @@ import { MatSnackBar } from '@angular/material';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
-import { any } from '@amcharts/amcharts4/.internal/core/utils/Array';
-
 const KEY = 'FREQUENCY';
 
 @Component({

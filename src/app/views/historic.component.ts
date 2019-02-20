@@ -11,8 +11,6 @@ import * as moment from 'moment';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
-declare var vis: any;
-
 @Component({
   selector: 'app-historic',
   templateUrl: './historic.component.html',
