@@ -15,9 +15,7 @@ export class MQTTService {
     connected = false;
     configurator = AppConfigurator;
 
-    constructor() {
-        // this.connect();
-    }
+    constructor() {}
 
     connect() {
         this.client = new Paho.MQTT.Client(this.configurator.getBrokerHostname(), 
