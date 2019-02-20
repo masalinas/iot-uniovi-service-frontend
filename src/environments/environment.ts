@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   basePath: 'http://localhost:3000',
-  brokerPath: 'http://localhost:8085',
+  brokerPath: 'http://localhost:8080',
   brokerDeviceTopic: 'uniovi/poc/#',
   brokerFeedbackTopic: 'uniovi/poc/feedback'
 };
