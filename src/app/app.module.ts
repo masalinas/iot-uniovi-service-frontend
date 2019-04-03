@@ -7,16 +7,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { SDKBrowserModule } from './shared/sdk/index';
 
 /** import UI and material UX modules **/
-import {FlexLayoutModule } from '@angular/flex-layout';
-import {MaterialModule} from './material-module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MaterialModule } from './material-module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** import App components **/
 import { AppComponent } from './app.component';
 import { RealtimeComponent } from './views/realtime.component';
 import { HistoricComponent } from './views/historic.component';
-import {MqttComponent} from './components/mqtt/mqtt.component';
+import { MqttComponent } from './components/mqtt/mqtt.component';
 
 /** import App services **/
 import { MQTTService } from './services/mqtt.service';
