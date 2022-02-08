@@ -1,1 +1,0 @@
-docker build --tag iot-uniovi-ui .

@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  frontend:
+    build: .
+    container_name: frontend-iot
+    ports:
+      - 4200:4200
+    environment:
+      - BASE_PATH=http://backend-iot:3000
+      - BROKER_PATH=http://broker-iot:1883
+      - BROKER_DEVICE_TOPIC=uniovi/poc/#
+      - BROKER_FEEDBACK_TOPIC=uniovi/poc/feedback
+    networks:
+      - network-name
+
+networks:
+    network-name:
+      name: uniovi
