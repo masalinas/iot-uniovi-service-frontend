@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "iot-uniovi-ui": {
+    "iot-uniovi-service-frontend": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/iot-uniovi-ui",
+            "outputPath": "dist/iot-uniovi-service-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -52,18 +52,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "iot-uniovi-ui:build"
+            "browserTarget": "iot-uniovi-service-frontend:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "iot-uniovi-ui:build:production"
+              "browserTarget": "iot-uniovi-service-frontend:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "iot-uniovi-ui:build"
+            "browserTarget": "iot-uniovi-service-frontend:build"
           }
         },
         "test": {
@@ -97,7 +97,7 @@
         }
       }
     },
-    "iot-uniovi-ui-e2e": {
+    "iot-uniovi-service-frontend-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -105,11 +105,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "iot-uniovi-ui:serve"
+            "devServerTarget": "iot-uniovi-service-frontend:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "iot-uniovi-ui:serve:production"
+              "devServerTarget": "iot-uniovi-service-frontend:serve:production"
             }
           }
         },
@@ -125,5 +125,5 @@
       }
     }
   },
-  "defaultProject": "iot-uniovi-ui"
+  "defaultProject": "iot-uniovi-service-frontend"
 }
