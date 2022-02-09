@@ -7,8 +7,8 @@ ENV ENV ${ENV}
 ENV APP ${APP}
 
 # set app environment variables
-ENV BASE_PATH http://192.168.1.55:3000
-ENV BROKER_PATH http://192.168.1.55:1883
+ENV BASE_PATH http://localhost:3000
+ENV BROKER_PATH http://localhost:9001
 ENV BROKER_USERNAME admin
 ENV BROKER_PASSWORD uniovi
 ENV BROKER_DEVICE_TOPIC uniovi/poc/#
